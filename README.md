@@ -29,7 +29,7 @@ Android TagViewGroup 是一个自定义的 ViewGroup，用于实现标签流式�
 
 ```gradle
 	dependencies {
-        implementation 'com.github.xesam:AndroidTagViewGroup:0.0.1'
+        implementation 'com.github.xesam:AndroidTagViewGroup:0.0.2'
 	}
 ```
 
