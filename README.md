@@ -1,149 +1,108 @@
 # Android TagViewGroup
 
-## 简介
-Android TagViewGroup 是一个自定义的 ViewGroup，用于实现标签流式布局。它支持自动换行、行数限制、间距控制等功能，适合用于显示标签云、搜索历史等场景。
+一个灵活的标签流式布局组件，支持在RecyclerView中使用。
 
 ## 功能特性
-- 流式布局：自动将子视图按行排列，当一行空间不足时自动换行
-- 行数限制：可以设置最大显示行数，超出部分会被截断
-- 间距控制：支持设置水平和垂直间距
-- 更多按钮：当内容被截断时，可以显示"更多"按钮
-- 自定义属性：支持在 XML 中通过属性设置 maxLines、horizontalSpacing、verticalSpacing
 
-## 集成方式
+- 流式标签布局，自动换行
+- 支持最大行数限制
+- 支持"更多"按钮显示
+- 完全兼容RecyclerView
+- 支持标签点击事件
+- 自定义样式支持
 
-### Gradle 依赖
-以 `gradle` 为例，在项目的 `build.gradle` 或者 `settings.gradle` 文件中添加：
+## 修复内容
 
-```gradle
-	dependencyResolutionManagement {
-		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-		repositories {
-			mavenCentral()
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
+### 修复了RecyclerView中的高度更新问题
 
-在模块目录的 `build.gradle` 文件中添加：
+在之前的版本中，TagViewGroup在RecyclerView中设置adapter后无法正确更新高度，导致无法显示。本次修复包含以下内容：
 
-```gradle
-	dependencies {
-        implementation 'com.github.xesam:AndroidTagViewGroup:0.0.1'
-	}
-```
+1. **改进了测量逻辑**
+   - 优化了`onMeasure`方法中的宽度计算
+   - 正确处理了AT_MOST测量模式
+   - 确保在无数据时也有最小高度
 
-更多配置方式可以参考 `jitpack`
-文档：[https://jitpack.io/#xesam/AndroidTagViewGroup](https://jitpack.io/#xesam/AndroidTagViewGroup)
+2. **添加了布局更新机制**
+   - 在`setAdapter`方法中添加了`requestLayout()`调用
+   - 使用`post()`方法确保父布局也得到更新通知
+   - 新增了`notifyDataSetChanged()`方法用于手动触发更新
+
+3. **增强了RecyclerView兼容性**
+   - 确保在ViewHolder中设置adapter后能正确测量
+   - 支持动态数据更新
 
 ## 使用方法
 
-### 1. 在 XML 布局中使用
+### 在RecyclerView中使用
+
+```java
+public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        TagViewGroup tagViewGroup;
+        
+        public ViewHolder(View itemView) {
+            super(itemView);
+            tagViewGroup = itemView.findViewById(R.id.tag_view_group);
+        }
+        
+        public void bind(ItemData data) {
+            tagViewGroup.setAdapter(new TagAdapter<String>() {
+                @Override
+                public int getCount() {
+                    return data.getTags().size();
+                }
+
+                @Override
+                public String getItem(int position) {
+                    return data.getTags().get(position);
+                }
+
+                @Override
+                protected View getView(int position, ViewGroup parent) {
+                    TextView textView = new TextView(parent.getContext());
+                    textView.setText(getItem(position));
+                    return textView;
+                }
+            });
+        }
+    }
+}
+```
+
+### XML布局
 
 ```xml
 <com.github.xesam.android.views.tag.TagViewGroup
     android:id="@+id/tag_view_group"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:horizontalSpacing="10dp"
     app:maxLines="3"
-    app:verticalSpacing="10dp" />
+    app:horizontalSpacing="8dp"
+    app:verticalSpacing="4dp" />
 ```
 
-### 2. 在代码中设置数据
+### 动态更新数据
 
 ```java
-TagViewGroup tagViewGroup = findViewById(R.id.tag_view_group);
-
-// 创建数据源
-List<String> dataList = new ArrayList<>();
-for (int i = 0; i < 40; i++) {
-    dataList.add("Tag " + (i + 1));
-}
-
-// 设置适配器
-tagViewGroup.setAdapter(new TagAdapter<String>() {
-    @Override
-    public int getCount() {
-        return dataList.size();
-    }
-
-    @Override
-    public String getItem(int position) {
-        return dataList.get(position);
-    }
-
-    @Override
-    protected View getView(int position, ViewGroup parent) {
-        TextView textView = new TextView(MainActivity.this);
-        textView.setText(getItem(position));
-        textView.setPadding(20, 10, 20, 10);
-        textView.setBackgroundResource(R.drawable.tag_background);
-        return textView;
-    }
-
-    @Override
-    protected View getMoreView(ViewGroup parent) {
-        TextView moreView = new TextView(MainActivity.this);
-        moreView.setText("更多");
-        moreView.setPadding(20, 10, 20, 10);
-        moreView.setBackgroundResource(R.drawable.more_background);
-        return moreView;
-    }
-});
-
-// 设置标签点击事件
-tagViewGroup.setOnTagClickListener(new OnTagClickListener() {
-    @Override
-    public void onTagClick(View view, int position) {
-        Toast.makeText(MainActivity.this, "点击了标签: " + dataList.get(position), Toast.LENGTH_SHORT).show();
-    }
-});
-
-// 设置更多按钮点击事件
-tagViewGroup.setOnMoreClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(MainActivity.this, "点击了更多按钮", Toast.LENGTH_SHORT).show();
-    }
-});
+// 设置新数据后调用notifyDataSetChanged()刷新布局
+tagViewGroup.setAdapter(newAdapter);
+tagViewGroup.notifyDataSetChanged();
 ```
 
-### 3. 动态配置
+## 构建和运行
 
-```java
-// 设置最大行数
-tagViewGroup.setMaxLines(3);
+```bash
+# 构建项目
+./gradlew assembleDebug
 
-// 设置水平间距
-tagViewGroup.setHorizontalSpacing(10);
-
-// 设置垂直间距
-tagViewGroup.setVerticalSpacing(10);
+# 安装到设备
+./gradlew installDebug
 ```
 
-## 自定义属性
+## 示例应用
 
-| 属性名 | 格式 | 说明 |
-| --- | --- | --- |
-| maxLines | integer | 最大显示行数 |
-| horizontalSpacing | dimension | 水平间距 |
-| verticalSpacing | dimension | 竖直间距 |
+项目中包含两个示例：
+- `MainActivity`: 展示基本功能和交互控制
+- `TestActivity`: 专门测试RecyclerView中的使用
 
-## License
-
-```
-Copyright 2024 xesam
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```
+修复后的版本确保在RecyclerView中能正确显示和更新标签布局。

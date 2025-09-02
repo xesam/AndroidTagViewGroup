@@ -38,6 +38,17 @@ public class TagViewGroup extends ViewGroup {
         requestLayout();
     }
 
+    /**
+     * 强制刷新布局，用于RecyclerView中数据更新后重新计算高度
+     */
+    public void notifyDataSetChanged() {
+        refreshChildViews();
+        // 确保父布局也重新测量
+        if (getParent() instanceof View) {
+            ((View) getParent()).requestLayout();
+        }
+    }
+
     public TagViewGroup(Context context) {
         this(context, null);
     }
@@ -95,6 +106,16 @@ public class TagViewGroup extends ViewGroup {
     public void setAdapter(TagAdapter<?> adapter) {
         mAdapter = adapter;
         refreshChildViews();
+        // 修复RecyclerView中高度更新问题
+        requestLayout();
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (getParent() instanceof ViewGroup) {
+                    ((ViewGroup) getParent()).requestLayout();
+                }
+            }
+        });
     }
 
     @Override
@@ -109,8 +130,18 @@ public class TagViewGroup extends ViewGroup {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // 计算所有子视图的位置和尺寸
-        int maxWidth = widthMode == MeasureSpec.EXACTLY ? widthSize : Integer.MAX_VALUE;
+        // 修复RecyclerView中高度计算问题
+        int maxWidth = widthMode == MeasureSpec.EXACTLY ? widthSize :
+                      (widthMode == MeasureSpec.AT_MOST ? widthSize : Integer.MAX_VALUE);
+
+        // 如果宽度未确定，使用父容器提供的最大宽度
+        if (maxWidth == 0 || maxWidth == Integer.MAX_VALUE) {
+            maxWidth = getSuggestedMinimumWidth();
+            if (maxWidth <= 0) {
+                maxWidth = getResources().getDisplayMetrics().widthPixels;
+            }
+        }
+
         int totalHeight = 0;
         int lineWidth = 0;
         int lineHeight = 0;
@@ -119,6 +150,15 @@ public class TagViewGroup extends ViewGroup {
 
         // 先移除所有现有的子视图
         removeAllViews();
+
+        if (childCount == 0) {
+            // 没有数据时设置最小高度
+            setMeasuredDimension(
+                widthMode == MeasureSpec.EXACTLY ? widthSize : 0,
+                heightMode == MeasureSpec.EXACTLY ? heightSize : 0
+            );
+            return;
+        }
 
         // 添加普通标签
         boolean needMoreView = false;
@@ -196,9 +236,19 @@ public class TagViewGroup extends ViewGroup {
 
         totalHeight += lineHeight;
 
+        // 确保有最小高度
+        if (totalHeight == 0 && childCount > 0) {
+            totalHeight = lineHeight;
+        }
+
         // 设置最终尺寸
-        int finalWidth = widthMode == MeasureSpec.EXACTLY ? widthSize : Math.min(lineWidth, widthSize);
-        int finalHeight = heightMode == MeasureSpec.EXACTLY ? heightSize : Math.min(totalHeight, heightSize);
+        int finalWidth = widthMode == MeasureSpec.EXACTLY ? widthSize :
+                        (widthMode == MeasureSpec.AT_MOST ? Math.min(lineWidth, widthSize) : lineWidth);
+        int finalHeight = heightMode == MeasureSpec.EXACTLY ? heightSize :
+                         (heightMode == MeasureSpec.AT_MOST ? Math.min(totalHeight, heightSize) : totalHeight);
+
+        // 确保高度不为0
+        finalHeight = Math.max(finalHeight, getSuggestedMinimumHeight());
 
         setMeasuredDimension(finalWidth, finalHeight);
     }
