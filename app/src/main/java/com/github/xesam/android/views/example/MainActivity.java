@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         List<ListItem> dataList = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
             List<String> tags = new ArrayList<>();
-            for (int j = 0; j < 10 + i; j++) {
+            for (int j = 0; j < i; j++) {
                 tags.add("标签" + (j + 1));
             }
             dataList.add(new ListItem("列表项 " + (i + 1), tags));

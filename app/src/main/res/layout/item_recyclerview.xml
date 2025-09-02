@@ -4,15 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
 
     <TextView
         android:id="@+id/item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:textStyle="bold" />
 
     <com.github.xesam.android.views.tag.TagViewGroup
         android:id="@+id/item_tag_view_group"
@@ -21,5 +22,4 @@
         app:horizontalSpacing="10dp"
         app:maxLines="3"
         app:verticalSpacing="10dp" />
-
 </LinearLayout>

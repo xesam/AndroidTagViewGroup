@@ -36,17 +36,14 @@ public class TagViewGroup extends ViewGroup {
         }
 
         requestLayout();
-    }
-
-    /**
-     * 强制刷新布局，用于RecyclerView中数据更新后重新计算高度
-     */
-    public void notifyDataSetChanged() {
-        refreshChildViews();
-        // 确保父布局也重新测量
-        if (getParent() instanceof View) {
-            ((View) getParent()).requestLayout();
-        }
+        post(new Runnable() {
+            @Override
+            public void run() {
+                if (getParent() instanceof ViewGroup) {
+                    ((ViewGroup) getParent()).requestLayout();
+                }
+            }
+        });
     }
 
     public TagViewGroup(Context context) {
@@ -70,7 +67,7 @@ public class TagViewGroup extends ViewGroup {
 
     public void setMaxLines(int maxLines) {
         mMaxLines = maxLines;
-        requestLayout();
+        refreshChildViews();
     }
 
     public int getMaxLines() {
@@ -79,7 +76,7 @@ public class TagViewGroup extends ViewGroup {
 
     public void setHorizontalSpacing(int spacing) {
         mHorizontalSpacing = spacing;
-        requestLayout();
+        refreshChildViews();
     }
 
     public int getHorizontalSpacing() {
@@ -88,7 +85,7 @@ public class TagViewGroup extends ViewGroup {
 
     public void setVerticalSpacing(int spacing) {
         mVerticalSpacing = spacing;
-        requestLayout();
+        refreshChildViews();
     }
 
     public int getVerticalSpacing() {
@@ -106,16 +103,6 @@ public class TagViewGroup extends ViewGroup {
     public void setAdapter(TagAdapter<?> adapter) {
         mAdapter = adapter;
         refreshChildViews();
-        // 修复RecyclerView中高度更新问题
-        requestLayout();
-        post(new Runnable() {
-            @Override
-            public void run() {
-                if (getParent() instanceof ViewGroup) {
-                    ((ViewGroup) getParent()).requestLayout();
-                }
-            }
-        });
     }
 
     @Override
@@ -132,7 +119,7 @@ public class TagViewGroup extends ViewGroup {
 
         // 修复RecyclerView中高度计算问题
         int maxWidth = widthMode == MeasureSpec.EXACTLY ? widthSize :
-                      (widthMode == MeasureSpec.AT_MOST ? widthSize : Integer.MAX_VALUE);
+                (widthMode == MeasureSpec.AT_MOST ? widthSize : Integer.MAX_VALUE);
 
         // 如果宽度未确定，使用父容器提供的最大宽度
         if (maxWidth == 0 || maxWidth == Integer.MAX_VALUE) {
@@ -154,8 +141,8 @@ public class TagViewGroup extends ViewGroup {
         if (childCount == 0) {
             // 没有数据时设置最小高度
             setMeasuredDimension(
-                widthMode == MeasureSpec.EXACTLY ? widthSize : 0,
-                heightMode == MeasureSpec.EXACTLY ? heightSize : 0
+                    widthMode == MeasureSpec.EXACTLY ? widthSize : 0,
+                    heightMode == MeasureSpec.EXACTLY ? heightSize : 0
             );
             return;
         }
@@ -243,11 +230,11 @@ public class TagViewGroup extends ViewGroup {
 
         // 设置最终尺寸
         int finalWidth = widthMode == MeasureSpec.EXACTLY ? widthSize :
-                        (widthMode == MeasureSpec.AT_MOST ? Math.min(lineWidth, widthSize) : lineWidth);
+                (widthMode == MeasureSpec.AT_MOST ? Math.min(lineWidth, widthSize) : lineWidth);
         int finalHeight = heightMode == MeasureSpec.EXACTLY ? heightSize :
-                         (heightMode == MeasureSpec.AT_MOST ? Math.min(totalHeight, heightSize) : totalHeight);
+                (heightMode == MeasureSpec.AT_MOST ? Math.min(totalHeight, heightSize) : totalHeight);
 
-        // 确保高度不为0
+        // 计算最终高度
         finalHeight = Math.max(finalHeight, getSuggestedMinimumHeight());
 
         setMeasuredDimension(finalWidth, finalHeight);
