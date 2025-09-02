@@ -14,12 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.xesam.android.views.tag.OnTagClickListener;
 import com.github.xesam.android.views.tag.TagAdapter;
 import com.github.xesam.android.views.tag.TagViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -134,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 setupTagAdapter(tagViewGroup, dataList, isChecked);
             }
         });
+
+        // 设置 RecyclerView
+        setupRecyclerView();
     }
 
     private void setupTagAdapter(TagViewGroup tagViewGroup, List<String> dataList, final boolean showMore) {
@@ -169,5 +175,23 @@ public class MainActivity extends AppCompatActivity {
                 return moreView;
             }
         });
+    }
+
+    private void setupRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // 创建示例数据
+        List<ListItem> dataList = new ArrayList<>();
+        for (int i = 0; i < 20; i++) {
+            List<String> tags = new ArrayList<>();
+            for (int j = 0; j < 10 + i; j++) {
+                tags.add("标签" + (j + 1));
+            }
+            dataList.add(new ListItem("列表项 " + (i + 1), tags));
+        }
+
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(dataList);
+        recyclerView.setAdapter(adapter);
     }
 }
