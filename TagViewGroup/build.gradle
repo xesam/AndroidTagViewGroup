@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
-    id 'maven-publish'
+    id "com.vanniktech.maven.publish" version "0.34.0"
+    id 'signing'
 }
 
 android {
@@ -20,14 +21,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    publishing {
-        // 定义单个变体，例如 'release'
-        singleVariant("release") {
-            // 可选：包含源码 Jar 和 Javadoc Jar
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -41,15 +34,37 @@ dependencies {
     androidTestImplementation libs.espresso.core
 }
 
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId = 'com.github.xesam'
-            artifactId = 'AndroidTagViewGroup'
-            version = '0.0.2'
-            afterEvaluate {
-                from components.release
+mavenPublishing {
+    coordinates("io.github.xesam", "android-taggroupview", "0.0.1")
+    pom {
+        name = 'Android TagViewGroup Library'
+        description = 'A simple Android TagViewGroup'
+        url = 'https://github.com/xesam/AndroidTagViewGroup'
+
+        licenses {
+            license {
+                name = 'The Apache License, Version 2.0'
+                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
             }
         }
+
+        developers {
+            developer {
+                id = 'xesam'
+                name = 'xesam'
+                email = 'xesam@outlook.com'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:git://github.com/xesam/AndroidTagViewGroup.git'
+            developerConnection = 'scm:git:ssh://github.com:xesam/AndroidTagViewGroup.git'
+            url = 'https://github.com/xesam/AndroidTagViewGroup'
+        }
     }
+
+    // 发布到Maven Central
+    publishToMavenCentral()
+    // 对发布的包进行签名
+    signAllPublications()
 }

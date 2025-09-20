@@ -13,28 +13,13 @@ Android TagViewGroup 是一个自定义的 ViewGroup，用于实现标签流式�
 ## 集成方式
 
 ### Gradle 依赖
-以 `gradle` 为例，在项目的 `build.gradle` 或者 `settings.gradle` 文件中添加：
-
-```gradle
-	dependencyResolutionManagement {
-		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-		repositories {
-			mavenCentral()
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-
-在模块目录的 `build.gradle` 文件中添加：
+以 `gradle` 为例，在模块目录的 `build.gradle` 文件中添加：
 
 ```gradle
 	dependencies {
-        implementation 'com.github.xesam:AndroidTagViewGroup:0.0.2'
+        implementation 'io.github.xesam:android-taggroupview:0.0.1'
 	}
 ```
-
-更多配置方式可以参考 `jitpack`
-文档：[https://jitpack.io/#xesam/AndroidTagViewGroup](https://jitpack.io/#xesam/AndroidTagViewGroup)
 
 ## 使用方法
 
