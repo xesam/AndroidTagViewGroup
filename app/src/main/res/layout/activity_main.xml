@@ -129,7 +129,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="RecyclerView 列表示例"
+        android:text="RecyclerView示例(maxLines=3)"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginTop="16dp"

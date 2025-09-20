@@ -1,5 +1,6 @@
 package com.github.xesam.android.views.example;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText(getItem(position));
                 textView.setPadding(20, 10, 20, 10);
                 textView.setBackgroundResource(R.drawable.tag_background);
+                textView.setTextColor(Color.WHITE);
                 return textView;
             }
 
@@ -188,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
             for (int j = 0; j < i; j++) {
                 tags.add("标签" + (j + 1));
             }
-            dataList.add(new ListItem("列表项 " + (i + 1), tags));
+            dataList.add(new ListItem("列表项 " + (i) + "个标签", tags));
         }
 
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(dataList);

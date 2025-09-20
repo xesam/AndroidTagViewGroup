@@ -36,14 +36,6 @@ public class TagViewGroup extends ViewGroup {
         }
 
         requestLayout();
-        post(new Runnable() {
-            @Override
-            public void run() {
-                if (getParent() instanceof ViewGroup) {
-                    ((ViewGroup) getParent()).requestLayout();
-                }
-            }
-        });
     }
 
     public TagViewGroup(Context context) {
