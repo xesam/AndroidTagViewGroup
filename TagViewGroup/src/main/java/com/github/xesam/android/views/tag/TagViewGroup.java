@@ -99,7 +99,6 @@ public class TagViewGroup extends ViewGroup {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // 修复RecyclerView中高度计算问题
         int maxWidth = widthMode == MeasureSpec.EXACTLY ? widthSize :
                 (widthMode == MeasureSpec.AT_MOST ? widthSize : Integer.MAX_VALUE);
 
