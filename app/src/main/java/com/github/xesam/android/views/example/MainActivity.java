@@ -18,12 +18,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.xesam.android.views.tag.OnTagClickListener;
 import com.github.xesam.android.views.tag.TagAdapter;
 import com.github.xesam.android.views.tag.TagViewGroup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -63,21 +61,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 设置适配器
         setupTagAdapter(tagViewGroup, dataList, true);
-
-        // 设置标签点击事件
-        tagViewGroup.setOnTagClickListener(new OnTagClickListener() {
-            @Override
-            public void onTagClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "点击了标签: " + dataList.get(position), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // 设置更多按钮点击事件
-        tagViewGroup.setOnMoreClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "点击了更多按钮", Toast.LENGTH_SHORT).show();
-            }
+        tagViewGroup.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "点击了标签组", Toast.LENGTH_SHORT).show();
         });
 
         // 设置SeekBar监听器
@@ -162,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
                 textView.setPadding(20, 10, 20, 10);
                 textView.setBackgroundResource(R.drawable.tag_background);
                 textView.setTextColor(Color.WHITE);
+                // 设置标签点击事件
+                textView.setOnClickListener(v -> {
+                    Toast.makeText(MainActivity.this, "点击了标签: " + dataList.get(position), Toast.LENGTH_SHORT).show();
+                });
                 return textView;
             }
 
@@ -174,6 +163,11 @@ public class MainActivity extends AppCompatActivity {
                 moreView.setText("更多");
                 moreView.setPadding(20, 10, 20, 10);
                 moreView.setBackgroundResource(R.drawable.more_background);
+
+                // 设置更多按钮点击事件
+                moreView.setOnClickListener(v -> {
+                    Toast.makeText(MainActivity.this, "点击了更多按钮", Toast.LENGTH_SHORT).show();
+                });
                 return moreView;
             }
         });

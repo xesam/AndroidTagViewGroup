@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.xesam.android.views.tag.OnTagClickListener;
 import com.github.xesam.android.views.tag.TagAdapter;
 import com.github.xesam.android.views.tag.TagViewGroup;
 
@@ -32,7 +31,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ListItem item = mDataList.get(position);
-        holder.bind(item);
+        holder.bind(item, position);
     }
 
     @Override
@@ -50,9 +49,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             tagViewGroup = itemView.findViewById(R.id.item_tag_view_group);
         }
 
-        public void bind(ListItem item) {
+        public void bind(ListItem item, int position) {
+            itemView.setOnClickListener(v -> {
+                // 列表项点击事件处理
+                Toast.makeText(itemView.getContext(), "点击了项" + position, Toast.LENGTH_SHORT).show();
+            });
             titleText.setText(item.getTitle());
-            
+
             // 设置 TagViewGroup 的适配器
             tagViewGroup.setAdapter(new TagAdapter<String>() {
                 @Override
@@ -77,14 +80,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 protected View getMoreView(ViewGroup parent) {
                     return null; // 在列表项中不显示更多按钮
-                }
-            });
-
-            // 设置标签点击事件
-            tagViewGroup.setOnTagClickListener(new OnTagClickListener() {
-                @Override
-                public void onTagClick(View view, int position) {
-                    Toast.makeText(itemView.getContext(), "点击了标签: " + item.getTags().get(position), Toast.LENGTH_SHORT).show();
                 }
             });
         }
