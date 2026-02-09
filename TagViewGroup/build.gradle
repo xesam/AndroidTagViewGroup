@@ -35,7 +35,7 @@ dependencies {
 }
 
 mavenPublishing {
-    coordinates("io.github.xesam", "android-taggroupview", "0.0.2")
+    coordinates("io.github.xesam", "android-taggroupview", "0.0.3")
     pom {
         name = 'Android TagViewGroup Library'
         description = 'A simple Android TagViewGroup'
