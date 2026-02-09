@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            protected View getView(int position, ViewGroup parent) {
+            public View getView(int position, ViewGroup parent) {
                 TextView textView = new TextView(MainActivity.this);
                 textView.setText(getItem(position));
                 textView.setPadding(20, 10, 20, 10);
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            protected View getMoreView(ViewGroup parent) {
+            public View getMoreView(ViewGroup parent) {
                 if (!showMore) {
                     return null;
                 }

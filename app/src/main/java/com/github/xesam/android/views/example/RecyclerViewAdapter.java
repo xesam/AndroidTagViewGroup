@@ -69,7 +69,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
 
                 @Override
-                protected View getView(int position, ViewGroup parent) {
+                public View getView(int position, ViewGroup parent) {
                     TextView textView = new TextView(parent.getContext());
                     textView.setText(getItem(position));
                     textView.setPadding(20, 10, 20, 10);
@@ -78,7 +78,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 }
 
                 @Override
-                protected View getMoreView(ViewGroup parent) {
+                public View getMoreView(ViewGroup parent) {
                     return null; // 在列表项中不显示更多按钮
                 }
             });

@@ -10,7 +10,7 @@ public class TagViewGroup extends ViewGroup {
     private int mMaxLines = Integer.MAX_VALUE;
     private int mHorizontalSpacing = 0;
     private int mVerticalSpacing = 0;
-    private TagAdapter<?> mAdapter;
+    private ITagAdapter mAdapter;
 
     private void refreshChildViews() {
         if (mAdapter == null) {
@@ -82,7 +82,7 @@ public class TagViewGroup extends ViewGroup {
         return mVerticalSpacing;
     }
 
-    public void setAdapter(TagAdapter<?> adapter) {
+    public void setAdapter(ITagAdapter adapter) {
         mAdapter = adapter;
         refreshChildViews();
     }
