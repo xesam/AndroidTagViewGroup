@@ -140,7 +140,7 @@ public class TagViewGroup extends ViewGroup {
             int childHeight = child.getMeasuredHeight();
 
             // 判断是否需要换行
-            if (lineWidth + childWidth > maxWidth && lineWidth > 0) {
+            if (lineWidth + (lineWidth > 0 ? mHorizontalSpacing : 0) + childWidth > maxWidth && lineWidth > 0) {
                 // 换行
                 if (lineCount >= mMaxLines) {
                     // 超过最大行数，移除当前视图
@@ -246,7 +246,7 @@ public class TagViewGroup extends ViewGroup {
             int childHeight = child.getMeasuredHeight();
 
             // 判断是否需要换行
-            if (lineWidth + childWidth > width && lineWidth > 0) {
+            if (lineWidth + (lineWidth > 0 ? mHorizontalSpacing : 0) + childWidth > width && lineWidth > 0) {
                 // 换行
                 totalHeight += lineHeight + mVerticalSpacing;
                 lineWidth = 0;
