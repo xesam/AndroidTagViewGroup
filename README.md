@@ -17,7 +17,7 @@ Android TagViewGroup 是一个自定义的 ViewGroup，用于实现标签流式�
 
 ```gradle
 	dependencies {
-        implementation 'io.github.xesam:android-taggroupview:0.0.1'
+        implementation 'io.github.xesam:android-taggroupview:0.0.3'
 	}
 ```
 
@@ -59,7 +59,7 @@ tagViewGroup.setAdapter(new TagAdapter<String>() {
     }
 
     @Override
-    protected View getView(int position, ViewGroup parent) {
+    public View getView(int position, ViewGroup parent) {
         TextView textView = new TextView(MainActivity.this);
         textView.setText(getItem(position));
         textView.setPadding(20, 10, 20, 10);
@@ -71,7 +71,7 @@ tagViewGroup.setAdapter(new TagAdapter<String>() {
     }
 
     @Override
-    protected View getMoreView(ViewGroup parent) {
+    public View getMoreView(ViewGroup parent) {
         TextView moreView = new TextView(MainActivity.this);
         moreView.setText("更多");
         moreView.setPadding(20, 10, 20, 10);
