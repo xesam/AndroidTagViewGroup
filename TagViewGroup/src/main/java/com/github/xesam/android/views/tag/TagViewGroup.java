@@ -10,9 +10,7 @@ public class TagViewGroup extends ViewGroup {
     private int mMaxLines = Integer.MAX_VALUE;
     private int mHorizontalSpacing = 0;
     private int mVerticalSpacing = 0;
-    private TagAdapter<?> mAdapter;
-    private OnTagClickListener mOnTagClickListener;
-    private OnClickListener mOnMoreClickListener;
+    private ITagAdapter mAdapter;
 
     private void refreshChildViews() {
         if (mAdapter == null) {
@@ -84,15 +82,7 @@ public class TagViewGroup extends ViewGroup {
         return mVerticalSpacing;
     }
 
-    public void setOnTagClickListener(OnTagClickListener listener) {
-        mOnTagClickListener = listener;
-    }
-
-    public void setOnMoreClickListener(OnClickListener listener) {
-        mOnMoreClickListener = listener;
-    }
-
-    public void setAdapter(TagAdapter<?> adapter) {
+    public void setAdapter(ITagAdapter adapter) {
         mAdapter = adapter;
         refreshChildViews();
     }
@@ -109,7 +99,6 @@ public class TagViewGroup extends ViewGroup {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // 修复RecyclerView中高度计算问题
         int maxWidth = widthMode == MeasureSpec.EXACTLY ? widthSize :
                 (widthMode == MeasureSpec.AT_MOST ? widthSize : Integer.MAX_VALUE);
 
@@ -151,7 +140,7 @@ public class TagViewGroup extends ViewGroup {
             int childHeight = child.getMeasuredHeight();
 
             // 判断是否需要换行
-            if (lineWidth + childWidth > maxWidth && lineWidth > 0) {
+            if (lineWidth + (lineWidth > 0 ? mHorizontalSpacing : 0) + childWidth > maxWidth && lineWidth > 0) {
                 // 换行
                 if (lineCount >= mMaxLines) {
                     // 超过最大行数，移除当前视图
@@ -257,7 +246,7 @@ public class TagViewGroup extends ViewGroup {
             int childHeight = child.getMeasuredHeight();
 
             // 判断是否需要换行
-            if (lineWidth + childWidth > width && lineWidth > 0) {
+            if (lineWidth + (lineWidth > 0 ? mHorizontalSpacing : 0) + childWidth > width && lineWidth > 0) {
                 // 换行
                 totalHeight += lineHeight + mVerticalSpacing;
                 lineWidth = 0;
@@ -298,23 +287,6 @@ public class TagViewGroup extends ViewGroup {
                 int bottom = top + childHeight;
 
                 child.layout(currentLeft, top, currentLeft + childWidth, bottom);
-
-                // 设置标签点击事件
-                final int childIndex = indexOfChild(child);
-                if (childIndex < mAdapter.getCount()) {
-                    child.setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (mOnTagClickListener != null) {
-                                mOnTagClickListener.onTagClick(v, childIndex);
-                            }
-                        }
-                    });
-                } else {
-                    // 这是MoreView
-                    child.setOnClickListener(mOnMoreClickListener);
-                }
-
                 currentLeft += childWidth + mHorizontalSpacing;
             }
 

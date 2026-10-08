@@ -17,7 +17,7 @@ Android TagViewGroup 是一个自定义的 ViewGroup，用于实现标签流式�
 
 ```gradle
 	dependencies {
-        implementation 'io.github.xesam:android-taggroupview:0.0.1'
+        implementation 'io.github.xesam:android-taggroupview:0.0.3'
 	}
 ```
 
@@ -59,37 +59,28 @@ tagViewGroup.setAdapter(new TagAdapter<String>() {
     }
 
     @Override
-    protected View getView(int position, ViewGroup parent) {
+    public View getView(int position, ViewGroup parent) {
         TextView textView = new TextView(MainActivity.this);
         textView.setText(getItem(position));
         textView.setPadding(20, 10, 20, 10);
         textView.setBackgroundResource(R.drawable.tag_background);
+        textView.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "点击了标签: " + dataList.get(position), Toast.LENGTH_SHORT).show();
+        });
         return textView;
     }
 
     @Override
-    protected View getMoreView(ViewGroup parent) {
+    public View getMoreView(ViewGroup parent) {
         TextView moreView = new TextView(MainActivity.this);
         moreView.setText("更多");
         moreView.setPadding(20, 10, 20, 10);
         moreView.setBackgroundResource(R.drawable.more_background);
+        // 设置更多按钮点击事件
+        moreView.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "点击了更多按钮", Toast.LENGTH_SHORT).show();
+        });
         return moreView;
-    }
-});
-
-// 设置标签点击事件
-tagViewGroup.setOnTagClickListener(new OnTagClickListener() {
-    @Override
-    public void onTagClick(View view, int position) {
-        Toast.makeText(MainActivity.this, "点击了标签: " + dataList.get(position), Toast.LENGTH_SHORT).show();
-    }
-});
-
-// 设置更多按钮点击事件
-tagViewGroup.setOnMoreClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(MainActivity.this, "点击了更多按钮", Toast.LENGTH_SHORT).show();
     }
 });
 ```
